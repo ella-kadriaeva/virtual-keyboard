@@ -5,10 +5,33 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./keyboard/style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&family=Roboto&display=swap" rel="stylesheet">
     <title>Virtual keyboard</title>
 </head>
 <body>
-    <div id="keyboard"></div>
+    
+    <div class="keyboard__meta">
+        <h1>Virtual keyboard</h1>
+        <textarea class="textarea"></textarea>
+    </div>
+    <div class="keyboard">
+        <div class="keyboard__list">
+            <button type="button" class="keyboard__item">a</button>
+            <button type="button" class="keyboard__item keyboard__item_wide">
+                <i class="material-icons">backspace</i>
+            </button>
+            <button type="button" class="keyboard__item keyboard__item_extrawide">
+                <i class="material-icons">space_bar</i>
+            </button>
+             <button type="button" class="keyboard__item keyboard__item_wide keyboard__item_activatable keyboard__item_active">
+                <i class="material-icons">keyboard_capslock</i>
+            </button>
+             <button type="button" class="keyboard__item keyboard__item_wide keyboard__item_dark">
+                <i class="material-icons">check_circle</i>
+            </button>
+        </div>
+    </div>
     <script defer src="./keyboard/script.js"></script>
 </body>
 </html>
