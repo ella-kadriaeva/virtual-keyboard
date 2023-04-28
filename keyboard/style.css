@@ -13,7 +13,12 @@
 .textarea {
   width: 600px;
   height: 200px;
+  resize: none;
+  padding: 0.5rem;
+  outline: none;
+  font-size: 1.2rem;
   border: 1px solid #250290;
+  border-radius: 4px;
 }
 
 .textarea:focus {
@@ -28,7 +33,6 @@
 
 .keyboard {
   text-align: center;
-
   position: fixed;
   left: 50%;
   transform: translateX(-50%);
@@ -46,14 +50,14 @@
   width: 100%;
 }
 .keyboard__item {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 500;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
   height: 45px;
   width: 5.7%;
   margin: 3px;
   border-radius: 4px;
   border: none;
-  background-color:rgba(255, 255, 255, 0.2);
+  background-color:rgba(255, 255, 255, 0.4);
   color: #ffffff;
   font-size: 1.05rem;
   outline: none;
@@ -64,12 +68,27 @@
   vertical-align: top;
   padding: 0;
   position: relative;
+  box-shadow: 3px 3px 3px rgba(6, 6, 6, 0.5);
 }
 
-.keyboard__item_active {
-  background-color:rgba(255, 255, 255, 0.12);
+.keyboard__item.active {
+  background-color:rgba(255, 255, 255, 0.2);
+  box-shadow: 5px 5px 5px rgba(6, 6, 6, 1);
+}
+.keyboard__item.remove {
+    animation: item_animation 0.5s forwards;
 }
 
+@keyframes item_animation {
+    0% {
+  background-color:rgba(255, 255, 255, 0.4);
+  box-shadow: 3px 3px 3px rgba(6, 6, 6, 0.5);
+    }
+    100% {
+  background-color:rgba(255, 255, 255, 0.2);
+  box-shadow: 5px 5px 5px rgba(6, 6, 6, 1);
+    }
+}
 .keyboard__item_wide {
   width: 12%;
 }
@@ -78,7 +97,7 @@
   width: 37.2%;
   max-width: 500px;
 }
-.keyboard__item_activatable::after {
+/* .keyboard__item_caps::after {
   content: '';
   top: 10px;
   right: 10px;
@@ -87,11 +106,18 @@
   height: 8px;
   border-radius: 50%;
   background-color:  rgba(0, 0, 0, 0.5);
-}
+} */
 
-.keyboard__item_active::after {
+/* .caps::after {
+  content: '';
+  top: 10px;
+  right: 10px;
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
   background-color: #38ee13;
-}
+} */
 .keyboard__item_dark {
   background-color:  rgba(0, 0, 0, 0.25);
 }
