@@ -16,6 +16,7 @@ const Keyboard = {
     value: "",
     chars: [],
     capsLock: false,
+    ctrl: false,
   },
 
   init() {
@@ -39,6 +40,8 @@ const Keyboard = {
     this.elements.keysContainer.appendChild(this._createKeys());
 
     this.elements.keys = this.elements.keysContainer.querySelectorAll(".keyboard__item");
+    this.elements.ctrlLeft = this.elements.keysContainer.querySelector(".keyboard__item_ctrl-left");
+    this.elements.ctrlRight = this.elements.keysContainer.querySelector(".keyboard__item_ctrl-right");
     // add to DOM
     this.elements.main.appendChild(this.elements.keysContainer);
     this.elements.block.append(this.elements.meta, this.elements.main);
@@ -52,7 +55,7 @@ _createKeys() {
       "tab", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]", "\\",
       "caps", "a", "s", "d", "f", "g", "h", "j", "k", "l", ";", "'", "enter",
       "shift",  "z", "x", "c", "v", "b", "n", "m", ",", ".", "/", "up", "shift_right",
-      "ctrl", "win", "alt", "space","alt", "win", "left", "down", "right", "ctrl",
+      "ctrl-left", "win", "alt", "space","alt", "win", "left", "down", "right", "ctrl-right",
     ];
     const createIconHtml = (icon_name) => {
       return `<i class="material-icons">${icon_name}</i>`
@@ -61,7 +64,7 @@ _createKeys() {
       const keyElement = document.createElement("button");
       const lineBreak = ["backspace", "\\", "enter", "shift_right"].indexOf(key) !== -1;
       keyElement.setAttribute("type", "button");
-        keyElement.classList.add("keyboard__item");
+      keyElement.classList.add("keyboard__item");
 
         switch (key) {
 
@@ -153,8 +156,32 @@ _createKeys() {
           keyElement.addEventListener("click", () => {
             this.addActive(keyElement);
           })
+            break;
+
+        case "ctrl-left":
+          keyElement.classList.add("keyboard__item_ctrl-left");
+          keyElement.innerHTML = "Ctrl";
+          keyElement.addEventListener("click", () => {
+            this.properties.ctrl = !this.properties.ctrl;
+            if (this.elements.ctrlRight.classList.contains('active')) {
+            return
+            }
+          this.elements.ctrlLeft.classList.toggle('active');
+          });
           break;
 
+        case "ctrl-right":
+          keyElement.classList.add("keyboard__item_ctrl-right");
+          keyElement.innerHTML = "Ctrl";
+          keyElement.addEventListener("click", () => {
+            this.properties.ctrl = !this.properties.ctrl;
+            if (this.elements.ctrlLeft.classList.contains('active')) {
+            return
+            }
+          this.elements.ctrlRight.classList.toggle('active');
+          });
+          break;
+        
         default:
           keyElement.textContent = key.toLowerCase();
           keyElement.addEventListener("click", () => {
@@ -189,10 +216,7 @@ _createKeys() {
     //         }
     //     }
     // },
-    // open(initialValue, oninput) {
-    //     this.properties.value = initialValue || " ";
-    //     this.eventHendlers.oninput = oninput;
-    // }
+
   addActive(keyElement) {
     keyElement.classList.add("active");
     keyElement.classList.remove('active');
@@ -212,6 +236,8 @@ let caps = document.querySelector(".keyboard__item_caps");
 let backspace = document.querySelector(".keyboard__item_backspace");
 let enterKey = document.querySelector(".keyboard__item_enter");
 let tabKey = document.querySelector(".keyboard__item_tab");
+// let ctrlKey_right = document.querySelector(".keyboard__item_ctrl-right");
+// let ctrlKey_left = document.querySelector(".keyboard__item_ctrl-left");
 
 for (let i = 0; i < keys.length; i++) {
   keys[i].setAttribute('keyname', keys[i].innerText);
@@ -220,7 +246,8 @@ for (let i = 0; i < keys.length; i++) {
 window.addEventListener("keydown", function (e) {
   for (let i = 0; i < keys.length; i++) {
     if (e.key == keys[i].getAttribute("keyname") || e.key == keys[i].getAttribute("lowerCaseName")) {
-      keys[i].classList.add('active');
+        keys[i].classList.add('active');
+        console.log(e.key, e.code, e)
     }
     if (e.code == 'Space') {
       addActiveClass(spaceKey);
@@ -241,9 +268,18 @@ window.addEventListener("keydown", function (e) {
       addActiveClass(enterKey);
       }
     if (e.code == 'Tab') {
-      addActiveClass(tabKey);
+        addActiveClass(tabKey);
+        
+      }
+      if (i == 54) {
+         keys[i].classList.add('active');
+
+      }
+        if (i == 63) {
+       keys[i].classList.add('active');
+      }
+  
     }
-  }
 })
 window.addEventListener("keyup", function (e) {
 
@@ -256,9 +292,13 @@ for (let i = 0; i < keys.length; i++) {
     }, 50)
   }
 
-  if (e.code == 'CapsLock'|| e.code == 'Space' || e.code == 'Backspace' || e.code == 'Enter' || e.code == 'Tab') {
+  if (e.code == 'CapsLock'|| e.code == 'Space' || e.code == 'Backspace' || e.code == 'Enter' || e.code == 'Tab' || e.code == 'Ctrl') {
     remove(keys[i]);
     }
+      if (i == 54 || i == 63) {
+          remove(keys[i]);
+      }
+
   }
 })
 const remove = (item) => {
