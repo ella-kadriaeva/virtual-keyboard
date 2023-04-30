@@ -52,7 +52,6 @@ const Keyboard = {
     // create main container
     this.elements.main = document.createElement("div");
     this.elements.keysContainer = document.createElement("div");
-
     // Create elements
     this.elements.main.classList.add("keyboard");
     this.elements.keysContainer.classList.add("keyboard__list");
@@ -61,12 +60,16 @@ const Keyboard = {
     this.elements.ctrlLeft = this.elements.keysContainer.querySelector(".keyboard__item_ctrl-left");
     this.elements.ctrlRight = this.elements.keysContainer.querySelector(".keyboard__item_ctrl-right");
     this.elements.altLeft = this.elements.keysContainer.querySelector(".keyboard__item_alt-left");
-      this.elements.altRight = this.elements.keysContainer.querySelector(".keyboard__item_alt-right");
+    this.elements.altRight = this.elements.keysContainer.querySelector(".keyboard__item_alt-right");
     this.elements.capsLock = this.elements.keysContainer.querySelector(".keyboard__item_caps");
     this.elements.shiftLeft = this.elements.keysContainer.querySelector(".shift-left");
     this.elements.shiftRight = this.elements.keysContainer.querySelector(".shift-right");
     this.elements.winLeft = this.elements.keysContainer.querySelector(".win-left");
     this.elements.winRight = this.elements.keysContainer.querySelector(".win-right");
+    this.elements.arrowLeft = this.elements.keysContainer.querySelector(".arrow-left");
+    this.elements.arrowRight = this.elements.keysContainer.querySelector(".arrow-right");
+    this.elements.arrowUp = this.elements.keysContainer.querySelector(".arrow-up");
+    this.elements.arrowDown = this.elements.keysContainer.querySelector(".arrow-down");
     // add to DOM
     this.elements.main.appendChild(this.elements.keysContainer);
     block.append(this.elements.main);
@@ -85,7 +88,10 @@ const Keyboard = {
         return `<span class="button-span">${span_name}</span>`;
         };
     let keyLayout = [...keyLayoutEn];
-
+    // const savedProperties = localStorage.getItem("propertiesSettings");
+    // if(savedProperties) {
+    //   activeButton = JSON.parse(savedProperties);
+    // }
     const savedSettings = localStorage.getItem("LandSettings");
     if(savedSettings) {
       keyLayout = JSON.parse(savedSettings);
@@ -133,14 +139,14 @@ const Keyboard = {
         keyElement.classList.add("keyboard__item_number");
         keyElement.innerHTML = createCharacter("#") + key;
         keyElement.addEventListener("click", () => {
-            this._createDoubleCharacters(keyElement, key, "!");
+            this._createDoubleCharacters(keyElement, key, "#");
         });
         break;
     case "4":
         keyElement.classList.add("keyboard__item_number");
         keyElement.innerHTML = createCharacter("$") + key;
         keyElement.addEventListener("click", () => {
-            this._createDoubleCharacters(keyElement, key, "!");
+            this._createDoubleCharacters(keyElement, key, "$");
         });
         break;
     case "5":
@@ -274,30 +280,33 @@ const Keyboard = {
                 return;
             }
             this._toggleShift();
-            this._toggleLanguage();
             this.elements.shiftRight.classList.toggle("active");
         });
         break;
     case "up":
         keyElement.innerHTML = createIconHtml("keyboard_arrow_up");
+        keyElement.classList.add("arrow-up");
         keyElement.addEventListener("click", () => {
             this.addActive(keyElement);
         });
         break;
     case "left":
         keyElement.innerHTML = createIconHtml("keyboard_arrow_left");
+        keyElement.classList.add("arrow-left");
         keyElement.addEventListener("click", () => {
             this.addActive(keyElement);
         });
         break;
     case "down":
         keyElement.innerHTML = createIconHtml("keyboard_arrow_down");
+        keyElement.classList.add("arrow-down");
         keyElement.addEventListener("click", () => {
             this.addActive(keyElement);
         });
         break;
     case "right":
         keyElement.innerHTML = createIconHtml("keyboard_arrow_right");
+        keyElement.classList.add("arrow-right");
         keyElement.addEventListener("click", () => {
             this.addActive(keyElement);
         });
@@ -307,21 +316,31 @@ const Keyboard = {
         keyElement.innerHTML = createSpan("Ctrl");
         keyElement.addEventListener("click", () => {
             this.properties.ctrl = !this.properties.ctrl;
+            if (this.properties.alt && this.properties.ctrl) {
+                this._toggleLanguage();
+            }
             if (this.elements.ctrlRight.classList.contains("active")) {
                 return;
+            }
+            if (this.properties.alt == false && this.properties.ctrl == false) {
+                this._toggleLanguage();
             }
             this.elements.ctrlLeft.classList.toggle("active");
         });
         break;
     case "ctrl_right":
         keyElement.classList.add("keyboard__item_ctrl-right");
-        keyElement.innerHTML = createSpan("Ctrl");
-        keyElement.addEventListener("click", () => {
+            keyElement.innerHTML = createSpan("Ctrl");
+            if(this.properties.ctrl)
+                keyElement.addEventListener("click", () => {
             this.properties.ctrl = !this.properties.ctrl;
+            if (this.properties.alt && this.properties.ctrl) {
+                this._toggleLanguage();
+            }
             if (this.elements.ctrlLeft.classList.contains("active")) {
                 return;
             }
-            this.elements.ctrlRight.classList.toggle("active");
+                    this.elements.ctrlRight.classList.toggle("active");
         });
         break;
     case "win_left":
@@ -349,6 +368,9 @@ const Keyboard = {
         keyElement.innerHTML = createSpan("Alt");
         keyElement.addEventListener("click", () => {
             this.properties.alt = !this.properties.alt;
+            if (this.properties.alt && this.properties.ctrl) {
+                this._toggleLanguage();
+            }
             if (this.elements.altRight.classList.contains("active")) {
                 return;
             }
@@ -360,6 +382,9 @@ const Keyboard = {
         keyElement.innerHTML = createSpan("Alt");
         keyElement.addEventListener("click", () => {
             this.properties.alt = !this.properties.alt;
+            if (this.properties.alt && this.properties.ctrl) {
+                this._toggleLanguage();
+            }
             if (this.elements.altLeft.classList.contains("active")) {
                 return;
             }
@@ -379,14 +404,14 @@ const Keyboard = {
     fragment.append(keyElement);
     if (lineBreak) {
         fragment.appendChild(document.createElement("br"));
-      }
+    }
     });
     return fragment;
     },
 
     _toggleCapsLock() {
         this.properties.capsLock = !this.properties.capsLock;
-        console.log("CapsLock toggled!");
+
         for (const key of this.elements.keys) {
             if (key.childElementCount === 0) {
                 key.textContent = this.properties.capsLock ? key.textContent.toUpperCase() : key.textContent.toLowerCase();
@@ -405,8 +430,8 @@ const Keyboard = {
     },
 
     _toggleLanguage() {
-        if (this.properties.alt && this.properties.shift) {
-            langEn = !langEn;
+        if (this.properties.alt && this.properties.ctrl) {
+        langEn = !langEn;
             if (langEn) {
                 localStorage.setItem("LandSettings", JSON.stringify(keyLayoutEn));
                 this.elements.keysContainer.remove();
@@ -437,7 +462,8 @@ const Keyboard = {
 
 Keyboard.init();
 
-const { keys, ctrlLeft, ctrlRight, shiftLeft, shiftRight, capsLock  } = Keyboard.elements;
+const { keys, ctrlLeft, ctrlRight, shiftLeft, shiftRight, capsLock, winRight, winLeft, altRight, altLeft,
+        arrowLeft, arrowDown, arrowUp, arrowRight} = Keyboard.elements;
 let spaceKey = document.querySelector(".space");
 let backspace = document.querySelector(".keyboard__item_backspace");
 let enterKey = document.querySelector(".keyboard__item_enter");
@@ -479,7 +505,6 @@ window.addEventListener("keydown", function (e) {
         if (e.code == "ShiftRight") {
             removeClass(shiftLeft);
         }
-
         if (e.code == "Backspace") {
             addActiveClass(backspace);
         }
@@ -495,6 +520,32 @@ window.addEventListener("keydown", function (e) {
         if (e.code == "ControlRight") {
             addActiveClass(ctrlRight);
         }
+        if (e.code == "MetaRight") {
+            addActiveClass(winRight);
+        }
+            if (e.code == "MetaLeft") {
+            addActiveClass(winLeft);
+        }
+        if (e.code == "AltRight") {
+            addActiveClass(altRight);
+            removeClass(altLeft);
+        }
+        if (e.code == "AltLeft") {
+            addActiveClass(altLeft);
+            removeClass(altRight);
+        }
+        if (e.code == "ArrowLeft") {
+            addActiveClass(arrowLeft);
+        }
+        if (e.code == "ArrowDown") {
+            addActiveClass(arrowDown);
+        }
+        if (e.code == "ArrowUp") {
+            addActiveClass(arrowUp);
+        }
+        if (e.code == "ArrowRight") {
+            addActiveClass(arrowRight);
+        }
     }
 });
 window.addEventListener("keyup", function (e) {
@@ -507,7 +558,8 @@ window.addEventListener("keyup", function (e) {
             }, 50);
         }
         if (e.code == "CapsLock" || e.code == "Space" || e.code == "Backspace" || e.code == "Enter" ||
-            e.code == "Tab" || e.code == "ControlRight" || e.code == "ControlLeft") {
+            e.code == "Tab" || e.code == "ControlRight" || e.code == "ControlLeft" || e.code == "MetaRight" ||
+            e.code == "MetaLeft" || e.code == "ArrowRight" || e.code == "ArrowUp" || e.code == "ArrowDown" || e.code == "ArrowLeft") {
             removeClass(keys[i]);
         }
         if (e.code == "Backquote") {
@@ -519,10 +571,10 @@ window.addEventListener("keyup", function (e) {
         if (e.code == "Digit0") {
             removeClass(keys[10]);
         }
-            if (e.code == "Minus") {
+        if (e.code == "Minus") {
             removeClass(keys[11]);
         }
-            if (e.code == "Equal") {
+        if (e.code == "Equal") {
             removeClass(keys[12]);
         }
     }
@@ -558,9 +610,7 @@ document.onkeydown = function (e) {
         key.textContent =  key.textContent.toLowerCase();
     }
 }
-        addActiveClass(capsLock);
+    addActiveClass(capsLock);
 }
-    console.log("code" + e.code);
-    console.log("key" + e.key);
-    console.log(e.key);
+
 };
