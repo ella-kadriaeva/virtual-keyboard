@@ -17,6 +17,8 @@ const Keyboard = {
     chars: [],
     capsLock: false,
     ctrl: false,
+    alt: false,
+    shift: false,
   },
 
   init() {
@@ -42,6 +44,10 @@ const Keyboard = {
     this.elements.keys = this.elements.keysContainer.querySelectorAll(".keyboard__item");
     this.elements.ctrlLeft = this.elements.keysContainer.querySelector(".keyboard__item_ctrl-left");
     this.elements.ctrlRight = this.elements.keysContainer.querySelector(".keyboard__item_ctrl-right");
+    this.elements.altLeft = this.elements.keysContainer.querySelector(".keyboard__item_alt-left");
+    this.elements.altRight = this.elements.keysContainer.querySelector(".keyboard__item_alt-right");
+    this.elements.shiftLeft = this.elements.keysContainer.querySelector(".shift-left");
+    this.elements.shiftRight = this.elements.keysContainer.querySelector(".shift-right");
     // add to DOM
     this.elements.main.appendChild(this.elements.keysContainer);
     this.elements.block.append(this.elements.meta, this.elements.main);
@@ -54,11 +60,14 @@ _createKeys() {
       "`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "backspace",
       "tab", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]", "\\",
       "caps", "a", "s", "d", "f", "g", "h", "j", "k", "l", ";", "'", "enter",
-      "shift",  "z", "x", "c", "v", "b", "n", "m", ",", ".", "/", "up", "shift_right",
-      "ctrl-left", "win", "alt", "space","alt", "win", "left", "down", "right", "ctrl-right",
+      "shift_left",  "z", "x", "c", "v", "b", "n", "m", ",", ".", "/", "up", "shift_right",
+      "ctrl_left", "win", "alt_left", "space","alt_right", "win", "left", "down", "right", "ctrl_right",
     ];
     const createIconHtml = (icon_name) => {
       return `<i class="material-icons">${icon_name}</i>`
+    };
+     const createSpan = (span_name) => {
+      return `<span class="button-span">${span_name}</i>`
     };
     keyLayout.forEach(key => {
       const keyElement = document.createElement("button");
@@ -81,6 +90,10 @@ _createKeys() {
         case "caps":
           keyElement.classList.add("keyboard__item_wide", "keyboard__item_caps");
           keyElement.innerHTML = createIconHtml("keyboard_capslock");
+          keyElement.addEventListener("click", () => {
+            this.addActive(keyElement);
+                  this._toggleCapsLock()
+              })
           break;
 
         case "enter":
@@ -112,22 +125,31 @@ _createKeys() {
           })
           break;
 
-        case "shift":
+        case "shift_left":
           keyElement.classList.add("keyboard__item_wide");
-          keyElement.classList.add("shift");
-          keyElement.innerHTML = "Shift";
-          keyElement.addEventListener("click", () => {
-            this.addActive(keyElement);
-          })
+                keyElement.classList.add("shift-left");
+                keyElement.innerHTML = createSpan("Shift");
+         keyElement.addEventListener("click", () => {
+            if (this.elements.shiftRight.classList.contains('active')) {
+            return
+             }
+             this._toggleShift()
+          this.elements.shiftLeft.classList.toggle('active');
+          });
           break;
 
         case "shift_right":
           keyElement.classList.add("keyboard__item_wide");
-          keyElement.classList.add("shift_right");
-          keyElement.innerHTML = "Shift";
-          keyElement.addEventListener("click", () => {
-            this.addActive(keyElement);
-          })
+          keyElement.classList.add("shift-right");
+          keyElement.innerHTML = createSpan("Shift");
+        keyElement.addEventListener("click", () => {
+            this.properties.shift = !this.properties.shift;
+            if (this.elements.shiftLeft.classList.contains('active')) {
+            return
+            }
+            this._toggleShift()
+          this.elements.shiftRight.classList.toggle('active');
+          });
           break;
 
         case "up":
@@ -158,9 +180,9 @@ _createKeys() {
           })
             break;
 
-        case "ctrl-left":
+        case "ctrl_left":
           keyElement.classList.add("keyboard__item_ctrl-left");
-          keyElement.innerHTML = "Ctrl";
+          keyElement.innerHTML = createSpan("Ctrl");
           keyElement.addEventListener("click", () => {
             this.properties.ctrl = !this.properties.ctrl;
             if (this.elements.ctrlRight.classList.contains('active')) {
@@ -170,9 +192,9 @@ _createKeys() {
           });
           break;
 
-        case "ctrl-right":
+        case "ctrl_right":
           keyElement.classList.add("keyboard__item_ctrl-right");
-          keyElement.innerHTML = "Ctrl";
+          keyElement.innerHTML = createSpan("Ctrl");
           keyElement.addEventListener("click", () => {
             this.properties.ctrl = !this.properties.ctrl;
             if (this.elements.ctrlLeft.classList.contains('active')) {
@@ -182,7 +204,38 @@ _createKeys() {
           });
           break;
         
-        default:
+            case "win":
+          keyElement.classList.add("keyboard__item_win");
+          keyElement.innerHTML = createSpan("Win");
+          keyElement.addEventListener("click", () => {
+          this.elements.ctrlRight.classList.toggle('active');
+          });
+          break;
+                
+         case "alt_left":
+          keyElement.classList.add("keyboard__item_alt-left");
+          keyElement.innerHTML = createSpan("Alt");
+          keyElement.addEventListener("click", () => {
+            this.properties.alt = !this.properties.alt;
+            if (this.elements.altRight.classList.contains('active')) {
+            return
+            }
+          this.elements.altLeft.classList.toggle('active');
+          });
+          break;
+        
+        case "alt_right":
+          keyElement.classList.add("keyboard__item_alt-right");
+          keyElement.innerHTML = createSpan("Alt");
+          keyElement.addEventListener("click", () => {
+            this.properties.alt = !this.properties.alt;
+            if (this.elements.altLeft.classList.contains('active')) {
+            return
+            }
+          this.elements.altRight.classList.toggle('active');
+          });
+          break;
+            default:
           keyElement.textContent = key.toLowerCase();
           keyElement.addEventListener("click", () => {
             this.elements.textarea.value += this.properties.capsLock ? key.toUpperCase() : key.toLowerCase();
@@ -200,22 +253,25 @@ _createKeys() {
     return fragment;
     },
 
-    // _triggerEvent(handlerName) {
-    //     console.log("Event triggered! Event name:" + handlerName);
-        // if (typeof this.eventHandlers[handlerName] === "function") {
-        //     this.eventHandlers[handlerName](this.properties.value);
-        // }
-    // },
+    _toggleCapsLock() {
+        this.properties.capsLock = !this.properties.capsLock;
+        console.log("CapsLock toggled!");
+        for (const key of this.elements.keys) {
+            if (key.childElementCount === 0) {
+                key.textContent = this.properties.capsLock ? key.textContent.toUpperCase() : key.textContent.toLowerCase();
+            }
+        }
+    },
 
-    // _toggleCapsLock() {
-    //     this.properties.capsLock = !this.properties.capsLock;
-    //     console.log("CapsLock toggled!");
-    //     for (const key of this.elements.keys) {
-    //         if (key.childElementCount === 0) {
-    //             key.textContent = this.properties.capsLock ? key.textContent.toUpperCase() : key.textContent.toLowerCase();
-    //         }
-    //     }
-    // },
+        _toggleShift() {
+        this.properties.shift = !this.properties.shift;
+        console.log("Shift toggled!");
+        for (const key of this.elements.keys) {
+            if (key.childElementCount === 0) {
+                key.textContent = this.properties.shift ? key.textContent.toUpperCase() : key.textContent.toLowerCase();
+            }
+        }
+    },
 
   addActive(keyElement) {
     keyElement.classList.add("active");
@@ -231,13 +287,13 @@ Keyboard.init();
 let keys = document.querySelectorAll(".keyboard__item");
 let spaceKey = document.querySelector(".space");
 let shift_right = document.querySelector(".shift_right");
-let shift = document.querySelector(".shift");
+let shift_left = document.querySelector(".shift_left");
 let caps = document.querySelector(".keyboard__item_caps");
 let backspace = document.querySelector(".keyboard__item_backspace");
 let enterKey = document.querySelector(".keyboard__item_enter");
 let tabKey = document.querySelector(".keyboard__item_tab");
-// let ctrlKey_right = document.querySelector(".keyboard__item_ctrl-right");
-// let ctrlKey_left = document.querySelector(".keyboard__item_ctrl-left");
+let ctrlKey_right = document.querySelector(".keyboard__item_ctrl-right");
+let ctrlKey_left = document.querySelector(".keyboard__item_ctrl-left");
 
 for (let i = 0; i < keys.length; i++) {
   keys[i].setAttribute('keyname', keys[i].innerText);
@@ -256,7 +312,7 @@ window.addEventListener("keydown", function (e) {
       remove(shift_right);
       }
     if (e.code == 'ShiftRight') {
-      remove(shift);
+      remove(shift_left);
       }
     if (e.code == 'CapsLock') {
       addActiveClass(caps);
@@ -271,12 +327,12 @@ window.addEventListener("keydown", function (e) {
         addActiveClass(tabKey);
         
       }
-      if (i == 54) {
-         keys[i].classList.add('active');
+      if (e.code == 'ControlLeft') {
+        addActiveClass(ctrlKey_left);
 
       }
-        if (i == 63) {
-       keys[i].classList.add('active');
+        if (e.code == 'ControlRight') {
+      addActiveClass(ctrlKey_right);
       }
   
     }
@@ -292,12 +348,10 @@ for (let i = 0; i < keys.length; i++) {
     }, 50)
   }
 
-  if (e.code == 'CapsLock'|| e.code == 'Space' || e.code == 'Backspace' || e.code == 'Enter' || e.code == 'Tab' || e.code == 'Ctrl') {
+    if (e.code == 'CapsLock' || e.code == 'Space' || e.code == 'Backspace' || e.code == 'Enter' ||
+        e.code == 'Tab' || e.code == 'ControlRight' || e.code == 'ControlLeft') {
     remove(keys[i]);
     }
-      if (i == 54 || i == 63) {
-          remove(keys[i]);
-      }
 
   }
 })
@@ -311,4 +365,12 @@ const remove = (item) => {
 
 const addActiveClass = (item) => {
   item.classList.add('active');
+}
+document.onkeydown = function (e) {
+ 
+    // console.log("code" + e.code);
+    // console.log("key" + e.key);
+    console.log(e.key)
+  
+    //  console.log(e);
 }
