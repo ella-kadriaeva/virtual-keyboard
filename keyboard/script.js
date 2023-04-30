@@ -61,7 +61,8 @@ const Keyboard = {
     this.elements.ctrlLeft = this.elements.keysContainer.querySelector(".keyboard__item_ctrl-left");
     this.elements.ctrlRight = this.elements.keysContainer.querySelector(".keyboard__item_ctrl-right");
     this.elements.altLeft = this.elements.keysContainer.querySelector(".keyboard__item_alt-left");
-    this.elements.altRight = this.elements.keysContainer.querySelector(".keyboard__item_alt-right");
+      this.elements.altRight = this.elements.keysContainer.querySelector(".keyboard__item_alt-right");
+    this.elements.capsLock = this.elements.keysContainer.querySelector(".keyboard__item_caps");
     this.elements.shiftLeft = this.elements.keysContainer.querySelector(".shift-left");
     this.elements.shiftRight = this.elements.keysContainer.querySelector(".shift-right");
     this.elements.winLeft = this.elements.keysContainer.querySelector(".win-left");
@@ -211,12 +212,12 @@ const Keyboard = {
         keyElement.classList.add("keyboard__item_wide", "keyboard__item_caps");
         keyElement.innerHTML = createIconHtml("keyboard_capslock");
         keyElement.addEventListener("click", () => {
-            if (keyElement.classList.contains("caps")) {
-                keyElement.classList.remove("caps");
+            if (keyElement.classList.contains("_caps")) {
+                keyElement.classList.remove("_caps");
                 this.addActive(keyElement);
                 this._toggleCapsLock();
             } else {
-                keyElement.classList.add("caps");
+                keyElement.classList.add("_caps");
                 this.addActive(keyElement);
                 this._toggleCapsLock();
             }
@@ -434,13 +435,10 @@ const Keyboard = {
     },
 };
 
-document.addEventListener("DOMContentLoaded", function () {
-    Keyboard.init();
-});
+Keyboard.init();
 
-const { keys, ctrlLeft, ctrlRight, shiftLeft, shiftRight  } = Keyboard.elements;
+const { keys, ctrlLeft, ctrlRight, shiftLeft, shiftRight, capsLock  } = Keyboard.elements;
 let spaceKey = document.querySelector(".space");
-let caps = document.querySelector(".keyboard__item_caps");
 let backspace = document.querySelector(".keyboard__item_backspace");
 let enterKey = document.querySelector(".keyboard__item_enter");
 let tabKey = document.querySelector(".keyboard__item_tab");
@@ -481,9 +479,7 @@ window.addEventListener("keydown", function (e) {
         if (e.code == "ShiftRight") {
             removeClass(shiftLeft);
         }
-        if (e.code == "CapsLock") {
-            addActiveClass(caps);
-        }
+
         if (e.code == "Backspace") {
             addActiveClass(backspace);
         }
@@ -544,6 +540,26 @@ const addActiveClass = (item) => {
     item.classList.add("active");
 };
 document.onkeydown = function (e) {
+    if (e.code == "CapsLock") {
+        let isOnCaps = capsLock.classList.contains("_caps");
+        if (!isOnCaps) {
+            capsLock.classList.add("_caps");
+            for (const key of keys) {
+                if (key.childElementCount === 0) {
+                    key.textContent = key.textContent.toUpperCase();
+                }
+            }
+        addActiveClass(capsLock);
+        return;
+        }
+        capsLock.classList.remove("_caps");
+        for (const key of keys) {
+            if (key.childElementCount === 0) {
+        key.textContent =  key.textContent.toLowerCase();
+    }
+}
+        addActiveClass(capsLock);
+}
     console.log("code" + e.code);
     console.log("key" + e.key);
     console.log(e.key);

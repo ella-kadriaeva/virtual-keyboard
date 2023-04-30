@@ -112,7 +112,7 @@
   background-color:  rgba(0, 0, 0, 0.5);
 }
 
-.caps::after {
+._caps::after {
   content: '';
   top: 10px;
   right: 10px;
